@@ -31881,7 +31881,7 @@ Could be memory leak or a code change in the GIT Commit?
                                             <div class="col-xs-10 col-md-9 col-lg-8 form-field">
                                               <div class="sn-stream-textarea-container"><span class="sn-stream-input-decorator" ng-style="{ 'background-color': fields[inputType].color}" style="background-color: gold"></span>
                                                 <textarea id="activity-stream-textarea" ng-init="inputType = 'work_notes'" aria-label="Work notes" class="sn-string-textarea form-control ng-pristine ng-untouched ng-valid ng-isolate-scope ng-empty" placeholder="Work notes" ng-attr-placeholder="{{fields[inputType].label}}" ng-model="inputTypeValue" data-stream-text-input="work_notes" aria-describedby="fieldmsg-singleinput-7" sn-resize-height="" sn-sync-with="inputType" sn-sync-with-value-in-fn="reduceMentions(text)" sn-sync-with-value-out-fn="expandMentions(text)" mentio="" mentio-typed-term="typedTerm" mentio-id="activity-stream-textarea" mentio-require-leading-space="true" mentio-trigger-char="'@'" mentio-items="members" mentio-search="searchMembersAsync(term)" mentio-template-url="/at-mentions.tpl" mentio-select="selectAtMention(item)" mentio-suppress-trailing-space="true" style="overflow: hidden; overflow-wrap: break-word; height: 64px;" autocomplete="off" aria-invalid="false">
-📥 Checked GIT Commit - a massive reduction in innodb_buffer_pool_size has been commited by DEV on the /etc/my.cnf file
+📥 Checked GIT Commit - a massive reduction in resource limits has been commited by DEV on the mysql Deployment
 ❗ Check with DEV to adapt GIT Commit</textarea>
                                               </div>
                                               <!-- ngRepeat: f in fields -->
@@ -32057,14 +32057,14 @@ Could be memory leak or a code change in the GIT Commit?
                                             <li>
                                               <span class="sn-widget-list-table-cell">Resolution notes</span>
                                               <span class="sn-widget-list-table-cell"><span>
-                                                ❗ Cause: GIT Commit set the MySQL innodb_buffer_pool_size too low
-                                                <br>- MySQL database is being killed with OoutOfMemory status. 
+                                                ❗ Cause: GIT Commit set the MySQL Deployment Limits too low
+                                                <br>- MySQL Pod is restarting/killed with OoutOfMemory status. 
                                                 <br>- Ratings Pod is unable to access database. 
                                                 <br>- After correction, ratings Pod is unable to pick up the restart and has to be restarted as well. 
                                                 <br>
-                                                <br>✅ Resolved by adapting MySQL innodb_buffer_pool_size and restarting ratings pods.
+                                                <br>✅ Resolved by adapting mysql deployment resource limits and restarting ratings pods.
                                                 <br>🚀 Runbook:
-                                                <br>Increase innodb_buffer_pool_size for mysql - check with DEV to correct GIT Commit
+                                                <br>Increase resource limits for mysql Deployment - check with DEV to correct GIT Commit
                                                 <br>oc delete pod -n robot-shop $(oc get po -n robot-shop|grep ratings|awk '{print$1}'
                                           
                                               </span>

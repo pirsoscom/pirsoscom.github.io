@@ -32272,14 +32272,14 @@ Check commit for deployment limits that have been set too low./span>
                         </div>
                       </div>
                       <textarea id="incident.close_notes" onchange="this.isFocused=false;multiModified(this);" onkeydown="multiKeyDown(this);" style="width: 100%; overflow: hidden; overflow-wrap: break-word; resize: none; height: 188px;" name="incident.close_notes" specialtype="" data-length="4000" data-charlimit="false" onfocus="this.isFocused=true;" onblur="this.isFocused=false;" class="form-control" aria-required="false" spellcheck="true" mandatory="false" aria-label="Resolution notes" wrap="soft">
-❗ Cause: GIT Commit set the MySQL Deployment Limits too low
-      - MySQL Pod is restarting/killed with OoutOfMemory status. 
+❗ Cause: GIT Commit set the MySQL innodb_buffer_pool_size too low
+      - MySQL Database is restarting/killed with OutOfMemory status. 
       - Ratings Pod is unable to access database. 
       - After correction, ratings Pod is unable to pick up the restart and has to be restarted as well. 
 
-✅ Resolved by adapting mysql deployment resource limits and restarting ratings pods.
+✅ Resolved by adapting MySQL innodb_buffer_pool_size and restarting ratings pods.
 🚀 Runbook:
-      Increase resource limits for mysql Deployment - check with DEV to correct GIT Commit
+      Increase innodb_buffer_pool_size for mysql - check with DEV to correct GIT Commit
       oc delete pod -n robot-shop $(oc get po -n robot-shop|grep ratings|awk '{print$1}'
 </textarea><input type="hidden" id="sys_original.incident.close_notes" name="sys_original.incident.close_notes" value="MySQL Deployment was out of Memory. 
 
