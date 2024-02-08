@@ -269,7 +269,29 @@
     <meta name="savepage-version" content="25.6">
     <meta name="savepage-comments" content="">
   </head> 
-  <body ng-app="robotshop" class="ng-scope"> 
+  <body ng-app="robotshop" class="ng-scope"><style>
+    .overlayDemo {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      display: flex;
+      background-color: #99bbee;
+      color: #0000dd;
+      font-size: xx-small;
+      z-index: 999;
+      border-radius: 15px;
+      border-width: 1px;
+      border-color: #9999bb;
+      border-style: solid;
+      text-align-last: center;
+      padding: 10px;
+    }
+  </style>
+  <div class="overlayDemo">
+    Static Page<BR>
+    For Demonstration <BR>
+    Purposes Only
+  </div> 
     <div ng-controller="shopform" class="ng-scope"> 
       <h1><a data-savepage-href="/" href="http://web-robot-shop.cp4waiops31-3c14aa1ff2da1901bfc7ad8b495c85d9-0000.eu-de.containers.appdomain.cloud/">Stan's Robot Shop</a>
       </h1> 

@@ -337,7 +337,29 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
 
 <!--[if IE]><body class="ie" ng-controller="MainController"><![endif]-->
 <!--[if (!IE)|(gt IE 10)]><!--> <body ng-controller="MainController" class="ng-scope"> <!--<![endif]-->
-
+	<style>
+    .overlayDemo {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      display: flex;
+      background-color: #99bbee;
+      color: #0000dd;
+      font-size: xx-small;
+      z-index: 999;
+      border-radius: 15px;
+      border-width: 1px;
+      border-color: #9999bb;
+      border-style: solid;
+      text-align-last: center;
+      padding: 10px;
+    }
+  </style>
+  <div class="overlayDemo">
+    Static Page<BR>
+    For Demonstration <BR>
+    Purposes Only
+  </div>
 <!-- ngIf: appState != APP_STATES.INDETERMINATE --><div class="system-alert__container ng-isolate-scope" role="complementary" ng-if="appState != APP_STATES.INDETERMINATE">
 	<!-- ngRepeat: alert in displayAlerts -->
 </div><!-- end ngIf: appState != APP_STATES.INDETERMINATE -->

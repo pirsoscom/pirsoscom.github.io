@@ -211,7 +211,29 @@
     <meta name="savepage-version" content="25.7">
     <meta name="savepage-comments" content="">
   </head> 
-  <body class="logged-in env-production page-responsive full-width" style="word-wrap: break-word;"> 
+  <body class="logged-in env-production page-responsive full-width" style="word-wrap: break-word;"> <style>
+    .overlayDemo {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      display: flex;
+      background-color: #99bbee;
+      color: #0000dd;
+      font-size: xx-small;
+      z-index: 999;
+      border-radius: 15px;
+      border-width: 1px;
+      border-color: #9999bb;
+      border-style: solid;
+      text-align-last: center;
+      padding: 10px;
+    }
+  </style>
+  <div class="overlayDemo">
+    Static Page<BR>
+    For Demonstration <BR>
+    Purposes Only
+  </div>
     <div class="position-relative js-header-wrapper "> <a href="#start-of-content" class="p-3 color-bg-info-inverse color-text-white show-on-focus js-skip-to-content">Skip to content</a> <span class="progress-pjax-loader width-full js-pjax-loader-bar Progress position-fixed"> 
         <span style="background-color: #79b8ff;width: 0%;" class="Progress-item progress-pjax-loader-bar "></span> </span> 
       <header class="Header js-details-container Details px-3 px-md-4 px-lg-5 flex-wrap flex-md-nowrap" role="banner"> 
