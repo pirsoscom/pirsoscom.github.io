@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Microservices, Containers & Kubernetes Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080c10;
+      --surface: #0d1117;
+      --surface2: #161b22;
+      --border: #21262d;
+      --accent: #00e5a0;
+      --accent2: #0af;
+      --danger: #ff4560;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --radius: 6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      overflow-x: hidden;
+    }
+
+    /* grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,160,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,160,.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .shell {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 720px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .logo {
+      width: 38px; height: 38px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo svg { width: 22px; height: 22px; }
+    .brand { font-size: 11px; font-family: 'Space Mono', monospace; color: var(--muted); letter-spacing: .12em; text-transform: uppercase; }
+    .brand strong { display: block; font-size: 18px; color: var(--text); font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -.01em; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px rgba(0,229,160,.05), 0 24px 48px rgba(0,0,0,.5);
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-wrap {
+      background: var(--border);
+      height: 3px;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+      box-shadow: 0 0 12px var(--accent);
+    }
+
+    /* ── META ── */
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px 0;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .06em;
+    }
+    .meta .q-counter { color: var(--accent); font-weight: 700; }
+    .meta .score-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── QUESTION ── */
+    .question-wrap {
+      padding: 28px 24px 24px;
+    }
+    .q-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .q-text {
+      font-size: clamp(16px, 2.5vw, 22px);
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    /* ── OPTIONS ── */
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 24px 24px;
+    }
+    @media (max-width: 520px) { .options { grid-template-columns: 1fr; } }
+
+    .opt {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: border-color .15s, background .15s, transform .1s;
+      text-align: left;
+      user-select: none;
+      font-family: 'Syne', sans-serif;
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .opt:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: rgba(0,229,160,.06);
+      transform: translateY(-1px);
+    }
+    .opt:disabled { cursor: default; }
+    .opt-key {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      background: var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: var(--muted);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* answer states */
+    .opt.correct {
+      border-color: var(--accent) !important;
+      background: rgba(0,229,160,.12) !important;
+      box-shadow: 0 0 0 1px var(--accent) inset;
+    }
+    .opt.correct .opt-key { background: var(--accent); color: #000; }
+    .opt.wrong {
+      border-color: var(--danger) !important;
+      background: rgba(255,69,96,.1) !important;
+    }
+    .opt.wrong .opt-key { background: var(--danger); color: #fff; }
+    .opt.reveal {
+      border-color: rgba(0,229,160,.3) !important;
+      background: rgba(0,229,160,.04) !important;
+    }
+
+    /* ── FEEDBACK ── */
+    .feedback {
+      margin: 0 24px 20px;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      line-height: 1.5;
+      font-family: 'Space Mono', monospace;
+      display: none;
+      animation: fadeIn .25s ease;
+    }
+    .feedback.correct { background: rgba(0,229,160,.1); border: 1px solid rgba(0,229,160,.25); color: var(--accent); }
+    .feedback.wrong   { background: rgba(255,69,96,.1); border: 1px solid rgba(255,69,96,.25); color: var(--danger); }
+
+    /* ── NEXT BTN ── */
+    .next-btn {
+      display: none;
+      margin: 0 24px 24px auto;
+      padding: 12px 28px;
+      background: var(--accent);
+      color: #000;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      width: fit-content;
+      transition: opacity .15s, transform .1s;
+      text-transform: uppercase;
+    }
+    .next-btn:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* ── SCREENS ── */
+    .screen { display: none; padding: 48px 24px; text-align: center; }
+    .screen.active { display: block; }
+
+    /* start screen */
+    .screen h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; margin-bottom: 12px; }
+    .screen h1 span { color: var(--accent); }
+    .screen p { color: var(--muted); font-size: 15px; line-height: 1.6; margin-bottom: 32px; max-width: 420px; margin-inline: auto; }
+
+    .stat-row {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 24px;
+      font-family: 'Space Mono', monospace;
+    }
+    .stat .val { font-size: 28px; font-weight: 700; color: var(--accent); }
+    .stat .lbl { font-size: 10px; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; margin-top: 4px; }
+
+    .start-btn, .restart-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: var(--radius);
+      padding: 14px 40px;
+      font-family: 'Space Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: opacity .15s, transform .1s;
+      box-shadow: 0 0 24px rgba(0,229,160,.25);
+    }
+    .start-btn:hover, .restart-btn:hover { opacity: .88; transform: translateY(-2px); }
+
+    /* result screen */
+    .result-ring {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      border: 4px solid var(--border);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      margin: 0 auto 28px;
+      position: relative;
+    }
+    .result-ring::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 4px solid transparent;
+      border-top-color: var(--accent);
+      border-right-color: var(--accent);
+      animation: spin 12s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .result-score { font-size: 36px; font-weight: 800; color: var(--accent); }
+    .result-label { font-size: 11px; font-family: 'Space Mono', monospace; color: var(--muted); }
+    .result-grade {
+      font-size: clamp(22px, 4vw, 32px);
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .grade-bar-wrap {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 24px;
+      margin: 24px auto;
+      max-width: 400px;
+      text-align: left;
+    }
+    .grade-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .grade-item:last-child { margin-bottom: 0; }
+    .grade-item .gi-label { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); width: 80px; flex-shrink: 0; }
+    .grade-item .gi-bar-wrap { flex: 1; background: var(--border); border-radius: 4px; height: 8px; overflow: hidden; }
+    .grade-item .gi-bar { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+    .grade-item .gi-val { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--text); width: 28px; text-align: right; flex-shrink: 0; }
+
+    @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: none; } }
+
+    /* quiz panel */
+    #quiz-panel { display: none; }
+    #quiz-panel.active { display: block; }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="header">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand"><strong>Nick's TechQuiz</strong>Microservices &amp; Kubernetes</div>
+    </div>
+  </div>
+
+  <!-- START SCREEN -->
+  <div class="card">
+    <div id="start-screen" class="screen active">
+      <h1>Test Your <span>Microservices &amp; K8s</span> Knowledge</h1>
+      <p>15 questions covering microservices patterns, Docker containers, and Kubernetes fundamentals.</p>
+      <div class="stat-row">
+        <div class="stat"><div class="val">15</div><div class="lbl">Questions</div></div>
+        <div class="stat"><div class="val">4</div><div class="lbl">Options each</div></div>
+        <div class="stat"><div class="val">∞</div><div class="lbl">Attempts</div></div>
+      </div>
+      <button class="start-btn" onclick="startQuiz()">Start Quiz →</button>
+    </div>
+
+    <!-- QUIZ PANEL -->
+    <div id="quiz-panel">
+      <div class="progress-wrap"><div class="progress-bar" id="progress-bar"></div></div>
+      <div class="meta">
+        <span>Question <span class="q-counter" id="q-counter">1 / 15</span></span>
+        <span class="score-badge">Score: <span id="score-display">0</span></span>
+      </div>
+      <div class="question-wrap">
+        <div class="q-label">Question</div>
+        <div class="q-text" id="q-text"></div>
+      </div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next →</button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="screen">
+      <div class="result-ring">
+        <div class="result-score" id="final-score">0</div>
+        <div class="result-label">/ 15</div>
+      </div>
+      <div class="result-grade" id="result-grade"></div>
+      <p id="result-msg"></p>
+      <div class="grade-bar-wrap">
+        <div class="grade-item">
+          <span class="gi-label">Correct</span>
+          <div class="gi-bar-wrap"><div class="gi-bar" id="bar-correct" style="background:var(--accent);width:0%"></div></div>
+          <span class="gi-val" id="val-correct">0</span>
+        </div>
+        <div class="grade-item">
+          <span class="gi-label">Wrong</span>
+          <div class="gi-bar-wrap"><div class="gi-bar" id="bar-wrong" style="background:var(--danger);width:0%"></div></div>
+          <span class="gi-val" id="val-wrong">0</span>
+        </div>
+        <div class="grade-item">
+          <span class="gi-label">Accuracy</span>
+          <div class="gi-bar-wrap"><div class="gi-bar" id="bar-acc" style="background:var(--accent2);width:0%"></div></div>
+          <span class="gi-val" id="val-acc">0%</span>
+        </div>
+      </div>
+      <button class="restart-btn" onclick="restartQuiz()">↺ Try Again</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  // ── MICROSERVICES ──
+  {
+    q: "What is the core principle of a microservices architecture?",
+    opts: ["One large application handles all functions", "Each service is independently deployable and focused on a single business capability", "Services share a single database", "All services must use the same programming language"],
+    ans: 1,
+    hint: "Microservices split an application into small, independent services each owning its own business domain."
+  },
+  {
+    q: "Which communication pattern is most commonly used between microservices for synchronous calls?",
+    opts: ["SOAP over FTP", "REST over HTTP / gRPC", "CORBA", "Raw TCP sockets"],
+    ans: 1,
+    hint: "REST/HTTP and gRPC are the dominant protocols for synchronous microservice-to-microservice communication."
+  },
+  {
+    q: "What is an API Gateway in a microservices architecture?",
+    opts: ["A database shared between services", "A single entry point that routes client requests to the appropriate backend service", "A tool for building container images", "A load balancer for virtual machines"],
+    ans: 1,
+    hint: "An API Gateway acts as the front door for all clients, handling routing, auth, and rate limiting."
+  },
+  {
+    q: "What is the 'Strangler' pattern used for in microservices?",
+    opts: ["Gradually migrating a monolith to microservices by replacing parts incrementally", "Killing idle services to save resources", "Merging multiple services into one", "Securing APIs with token validation"],
+    ans: 0,
+    hint: "Named after a fig tree that grows around a host tree — you progressively replace the monolith, piece by piece."
+  },
+
+  // ── CONTAINERS ──
+  {
+    q: "What is a Container image?",
+    opts: ["A running instance of an application", "A read-only template used to create containers", "A virtual machine snapshot", "A network configuration file"],
+    ans: 1,
+    hint: "An image is a read-only layered template. A running image is called a container."
+  },
+  {
+    q: "Which instruction in a Dockerfile sets the base image for subsequent instructions?",
+    opts: ["BASE", "START", "FROM", "ORIGIN"],
+    ans: 2,
+    hint: "Every Dockerfile must start with a FROM instruction that defines the base image."
+  },
+
+  {
+    q: "How do containers differ from virtual machines?",
+    opts: ["Containers include a full OS kernel; VMs do not", "Containers share the host OS kernel and are more lightweight than VMs", "VMs start faster than containers", "Containers cannot run on Linux"],
+    ans: 1,
+    hint: "Containers share the host kernel and isolate processes using namespaces/cgroups — far lighter than full VMs."
+  },
+  {
+    q: "What is a container registry?",
+    opts: ["A list of running containers on a host", "A storage and distribution system for container images", "A Kubernetes control plane component", "A network policy manager"],
+    ans: 1,
+    hint: "Registries like Docker Hub, ECR, or Harbor store and serve container images."
+  },
+  // ── KUBERNETES ──
+  {
+    q: "What is a Kubernetes Pod?",
+    opts: ["A virtual machine managed by Kubernetes", "The smallest deployable unit — one or more containers sharing network and storage", "A Kubernetes node", "A configuration file for services"],
+    ans: 1,
+    hint: "A Pod wraps one or more containers that share an IP address, hostname, and volumes."
+  },
+  {
+    q: "Which Kubernetes object manages stateful applications like databases, preserving Pod identity across restarts?",
+    opts: ["Deployment", "ReplicaSet", "StatefulSet", "DaemonSet"],
+    ans: 2,
+    hint: "StatefulSet gives each Pod a stable network identity and persistent storage — ideal for DBs like Cassandra."
+  },
+  {
+    q: "What is the role of the Kubernetes Scheduler?",
+    opts: ["Stores cluster state", "Routes external traffic to Pods", "Assigns newly created Pods to an appropriate node", "Monitors node health"],
+    ans: 2,
+    hint: "The kube-scheduler watches for unscheduled Pods and selects the best node based on resource requirements."
+  },
+  {
+    q: "What does a Kubernetes ConfigMap store?",
+    opts: ["Encrypted passwords and tokens", "Non-sensitive configuration data as key-value pairs", "Container image layers", "Network routing rules"],
+    ans: 1,
+    hint: "ConfigMaps hold non-confidential config data. For secrets, use a Kubernetes Secret instead."
+  },
+  {
+    q: "Which Kubernetes resource type manages rolling updates and rollbacks for stateless applications?",
+    opts: ["CronJob", "StatefulSet", "Deployment", "DaemonSet"],
+    ans: 2,
+    hint: "Deployments describe the desired state and handle rolling updates and rollbacks automatically."
+  },
+  {
+    q: "What is a Kubernetes Ingress?",
+    opts: ["A type of persistent storage volume", "An API object that manages external HTTP/S access to services in a cluster", "A tool for building Docker images", "A node-level network policy"],
+    ans: 1,
+    hint: "Ingress exposes HTTP/S routes from outside the cluster to services inside, supporting host/path-based routing."
+  },
+  {
+    q: "What command shows all Pods running in the 'default' namespace?",
+    opts: ["kubectl list pods --ns default", "kubectl get pods -n default", "kubectl describe namespace default", "kubectl pods show default"],
+    ans: 1,
+    hint: "`kubectl get pods -n <namespace>` lists all pods in the specified namespace."
+  }
+ 
+];
+
+let current = 0, score = 0, answered = false;
+let shuffled = [];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  shuffled = shuffle(QUESTIONS);
+  current = 0; score = 0;
+
+  document.getElementById('start-screen').classList.remove('active');
+  document.getElementById('result-screen').classList.remove('active');
+  document.getElementById('quiz-panel').classList.add('active');
+  renderQuestion();
+}
+
+function restartQuiz() {
+  document.getElementById('result-screen').classList.remove('active');
+  startQuiz();
+}
+
+function renderQuestion() {
+  answered = false;
+  const total = shuffled.length;
+  const q = shuffled[current];
+
+  document.getElementById('progress-bar').style.width = ((current / total) * 100) + '%';
+  document.getElementById('q-counter').textContent = `${current + 1} / ${total}`;
+  document.getElementById('score-display').textContent = score;
+  document.getElementById('q-text').textContent = q.q;
+
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'none';
+  fb.className = 'feedback';
+
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.style.display = 'none';
+
+  const optsEl = document.getElementById('options');
+  optsEl.innerHTML = '';
+  const keys = ['A', 'B', 'C', 'D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-key">${keys[i]}</span>${opt}`;
+    btn.onclick = () => selectAnswer(i);
+    optsEl.appendChild(btn);
+  });
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+
+  const q = shuffled[current];
+  const opts = document.querySelectorAll('.opt');
+  const fb = document.getElementById('feedback');
+
+  opts.forEach(b => { b.disabled = true; });
+
+  if (idx === q.ans) {
+    score++;
+    opts[idx].classList.add('correct');
+    fb.className = 'feedback correct';
+    fb.textContent = '✓ Correct! ' + q.hint;
+  } else {
+    opts[idx].classList.add('wrong');
+    opts[q.ans].classList.add('correct');
+    fb.className = 'feedback wrong';
+    fb.textContent = '✗ Incorrect. ' + q.hint;
+  }
+
+  fb.style.display = 'block';
+
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.style.display = 'flex';
+  nextBtn.textContent = current < shuffled.length - 1 ? 'Next →' : 'See Results →';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= shuffled.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById('quiz-panel').classList.remove('active');
+  const rs = document.getElementById('result-screen');
+  rs.classList.add('active');
+
+  const total = shuffled.length;
+  const wrong = total - score;
+  const acc = Math.round((score / total) * 100);
+
+  document.getElementById('final-score').textContent = score;
+  document.getElementById('val-correct').textContent = score;
+  document.getElementById('val-wrong').textContent = wrong;
+  document.getElementById('val-acc').textContent = acc + '%';
+
+  let grade, msg;
+  if (acc >= 90)      { grade = '🏆 Expert'; msg = 'Outstanding! You have deep cloud & IT expertise.'; }
+  else if (acc >= 75) { grade = '⭐ Advanced'; msg = 'Great job! You know your cloud architecture well.'; }
+  else if (acc >= 55) { grade = '📘 Intermediate'; msg = 'Solid base. Review the topics you missed and try again.'; }
+  else               { grade = '🔧 Beginner'; msg = 'Keep learning! Cloud & DevOps are worth mastering.'; }
+
+  document.getElementById('result-grade').textContent = grade;
+  document.getElementById('result-msg').textContent = msg;
+
+  // animate bars after paint
+  setTimeout(() => {
+    document.getElementById('bar-correct').style.width = ((score / total) * 100) + '%';
+    document.getElementById('bar-wrong').style.width = ((wrong / total) * 100) + '%';
+    document.getElementById('bar-acc').style.width = acc + '%';
+  }, 100);
+
+  document.getElementById('progress-bar').style.width = '100%';
+}
+</script>
+</body>
+</html>
